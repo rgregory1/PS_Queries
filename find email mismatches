@@ -1,0 +1,27 @@
+select
+	students.student_number,
+	emailaddress.emailaddress as "stock email",
+	U_StudentsUserFields.email AS "custom email",
+	pcas_externalaccountmap.openiduseraccountid AS "SSO email"
+	
+
+from 
+	students students
+	LEFT JOIN studentcorefields ON students.dcid=studentcorefields.studentsdcid
+	LEFT JOIN personemailaddressassoc on personemailaddressassoc.personid = students.person_id
+	LEFT JOIN emailaddress on emailaddress.emailaddressid = personemailaddressassoc.emailaddressid
+	join u_studentsuserfields on students.dcid   = u_studentsuserfields.studentsdcid
+	 LEFT JOIN accessstudent ON students.dcid = accessstudent.studentsdcid
+        LEFT JOIN pcas_externalaccountmap ON accessstudent.accountidentifier = pcas_externalaccountmap.pcas_accounttoken
+	
+	
+where
+	
+	-- (emailaddress.emailaddress <> u_studentsuserfields.email
+	-- OR u_studentsuserfields.email IS NULL
+	-- OR emailaddress.emailaddress IS NULL) and
+	(pcas_externalaccountmap.openiduseraccountid is NULL 
+	OR emailaddress.emailaddress <> pcas_externalaccountmap.openiduseraccountid)
+	and students.enroll_status = 0 
+	and grade_level >-1
+	and schoolid IN ('100','200','115','142','295')
