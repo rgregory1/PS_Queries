@@ -1,0 +1,32 @@
+SELECT to_char(attendance.att_date, 'DD/MM/YYYY')
+						  --, attendance.att_mode_code
+						  , attendance_code.att_code
+						  --, attendance_code.description as att_code_desc
+						  , attendance_code.presence_status_cd
+						  --, ac_school.name as att_code_school
+						  --, nvl2(ps_adaadm_defaults_all.attendancevalue, abs(ps_adaadm_defaults_all.attendancevalue - 1), null) as absent_day_equiv
+						  --, students.last_name
+						  --, students.first_name
+						  --, students.middle_name
+						  --, students.gender
+						  --, students.student_number
+						  --, students.state_studentnumber
+						  --, students.dob
+						  , students.GRADE_LEVEL
+						  , students.dcid	
+					FROM attendance
+					JOIN attendance_code ON attendance_code.id = attendance.attendance_codeid
+					JOIN schools ac_school ON ac_school.school_number = attendance_code.schoolid
+					left outer join ps_adaadm_defaults_all
+						on ps_adaadm_defaults_all.studentid = attendance.studentid
+						and ps_adaadm_defaults_all.calendardate = attendance.att_date
+					JOIN students ON students.id = attendance.studentid
+					
+					-- WHERE to_char(attendance.att_date, 'DD/MM/YYYY') = ~[short.date] 
+					WHERE to_char(attendance.att_date, 'DD.MM.YYYY') = to_char(sysdate, 'DD.MM.YYYY') 
+						and attendance.att_mode_code = 'ATT_ModeDaily' 
+						-- and students.schoolid = ~(curschoolid) 
+						and attendance_code.presence_status_cd = 'Absent'
+						
+					
+						AND attendance.attendance_codeid is not null 
