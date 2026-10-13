@@ -1,0 +1,28 @@
+SELECT
+    standardid,
+    level level_value,
+    parentstandardid,
+    identifier,
+    name,
+    description,
+    subjectarea,
+    isactive,
+    isassignmentallowed,
+    iscommentincluded,
+    isexcludedfromreports,
+    transientcourselist,
+    conversionscale,
+    gradescaleitemdcid,
+    yearid,
+    rownum R1
+FROM
+    Standard
+WHERE
+    yearid = 33
+CONNECT BY PRIOR
+    standardid = parentstandardid
+START WITH
+    parentstandardid IS NULL
+order siblings by
+    displayposition asc,
+    name asc
