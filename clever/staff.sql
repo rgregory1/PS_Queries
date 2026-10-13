@@ -1,6 +1,9 @@
 select
   
-  teachers.homeschoolid as School_id,
+  CASE
+    WHEN teachers.schoolid = 0 THEN 'district'
+    ELSE TO_CHAR(teachers.schoolid) 
+  END as School_id,
   teachers.teachernumber as Staff_id,
   teachers.Email_Addr as Staff_email,
   teachers.first_name as First_name,
